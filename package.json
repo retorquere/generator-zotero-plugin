@@ -21,7 +21,7 @@
   "engines": {
     "npm": ">= 4.0.0"
   },
-  "devDependencies": {
+  "dependencies": {
     "@types/yeoman-generator": "^3.0.1",
     "inquirer-npm-name": "^3.0.0",
     "jest": "^23.6.0",
@@ -32,7 +32,7 @@
     "yeoman-test": "^1.9.1",
     "yosay": "^2.0.2"
   },
-  "dependencies": {
+  "devDependencies": {
     "circular-dependency-plugin": "^5.0.2",
     "rimraf": "^2.6.3",
     "ts-loader": "^5.3.3",
@@ -44,9 +44,11 @@
     "webpack-cli": "^3.2.1"
   },
   "scripts": {
+    "lint": "tslint -t stylish --project .",
+    "test": "npm run lint",
     "preversion": "npm test",
     "postversion": "git push --follow-tags",
-    "prestart": "tslint -t stylish --project .",
+    "prestart": "npm run lint",
     "start": "tsc",
     "prepublishOnly": "npm start",
     "go": "npm start && npm version patch && npm publish"

@@ -73,7 +73,7 @@ export = class ZoteroPlugin extends Generator {
         url: `https://github.com/${this.user.git.name()}/${this.props.name}/issues`,
       },
       homepage: `https://github.com/${this.user.git.name()}/${this.props.name}`,
-      dependencies: require('../../package.json').dependencies,
+      dependencies: require('../../package.json').devDependencies,
       xpi: {
         name: `Zotero ${this.props.label}`,
         updateLink: `https://github.com/${this.user.git.name()}/${this.props.name}/releases/download/v{version}/zotero-auto-index-{version}.xpi`,
