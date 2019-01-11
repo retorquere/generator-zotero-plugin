@@ -1,0 +1,56 @@
+{
+  "name": "generator-zotero-plugin",
+  "version": "0.0.0",
+  "description": "Zotero Plugin",
+  "homepage": "https://retorque.re",
+  "author": {
+    "name": "Emiliano Heyns",
+    "email": "emiliano.heyns@iris-advies.com",
+    "url": "https://retorque.re"
+  },
+  "files": [
+    "generators"
+  ],
+  "main": "generators/app/index.js",
+  "keywords": [
+    "zotero",
+    "yeoman",
+    "typescript",
+    "yeoman-generator"
+  ],
+  "engines": {
+    "npm": ">= 4.0.0"
+  },
+  "devDependencies": {
+    "@types/yeoman-generator": "^3.0.1",
+    "inquirer-npm-name": "^3.0.0",
+    "jest": "^23.6.0",
+    "lodash": "^4.17.11",
+    "typescript": "^3.2.2",
+    "yeoman-assert": "^3.1.1",
+    "yeoman-generator": "^3.2.0",
+    "yeoman-test": "^1.9.1",
+    "yosay": "^2.0.2"
+  },
+  "dependencies": {
+    "circular-dependency-plugin": "^5.0.2",
+    "rimraf": "^2.6.3",
+    "ts-loader": "^5.3.3",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.2",
+    "webpack": "^4.28.4",
+    "zotero-plugin": "0.0.68",
+    "webpack-cli": "^3.2.1"
+  },
+  "scripts": {
+    "preversion": "npm test",
+    "postversion": "git push --follow-tags",
+    "prestart": "tslint -t stylish --project .",
+    "start": "tsc",
+    "prepublishOnly": "npm start",
+    "go": "npm start && npm version patch && npm publish"
+  },
+  "repository": "retorquere/generator-zotero-plugin",
+  "license": "MIT"
+}

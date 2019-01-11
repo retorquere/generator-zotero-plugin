@@ -1,0 +1,5 @@
+content	<%= name %>				content/
+locale	<%= name %>	en-US		locale/en-US/
+skin	<%= name %>	default		skin/
+
+overlay	chrome://zotero/content/zoteroPane.xul	chrome://<%= name %>/content/overlay.xul

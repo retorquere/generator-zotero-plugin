@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://<%= name %>/skin/overlay.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://<%= name %>/locale/<%= name %>.dtd">
+
+<overlay id="<%= name %>-overlay"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	
+	<!-- Include the main extension logic -->
+  <script src="chrome://zotero/content/include.js"/>
+  <script src="chrome://<%= name %>/content/<%= id %>overlay>
