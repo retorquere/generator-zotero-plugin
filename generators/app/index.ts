@@ -99,6 +99,7 @@ export = class ZoteroPlugin extends Generator {
       'tslint.json',
       'dot-travis.yml',
       'dot-gitignore',
+      'skin/default/overlay.css',
     ]
     for (const src of files) {
       const tgt = src.replace('dot-', '.')
