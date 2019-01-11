@@ -97,11 +97,12 @@ export = class ZoteroPlugin extends Generator {
     const files = [
       'tsconfig.json',
       'tslint.json',
-      '.travis.yml',
-      '.gitignore',
+      'dot-travis.yml',
+      'dot-gitignore',
     ]
-    for (const f of files) {
-      this.fs.copy(this.templatePath(f), this.destinationPath(f))
+    for (const src of files) {
+      const tgt = src.replace('dot-', '.')
+      this.fs.copy(this.templatePath(src), this.destinationPath(tgt))
     }
   }
 
