@@ -10,8 +10,6 @@ function patch(object, method, patcher) {
 }
 
 export let <%= id %> = Zotero.<%= id %> || new class { // tslint:disable-line:variable-name
-  public idle: boolean = false
-
   private initialized: boolean = false
 
   constructor() {
