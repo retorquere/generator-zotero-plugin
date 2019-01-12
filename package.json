@@ -33,6 +33,7 @@
     "yosay": "^2.0.2"
   },
   "devDependencies": {
+    "post-compile-webpack-plugin": "^0.1.2",
     "circular-dependency-plugin": "^5.0.2",
     "rimraf": "^2.6.3",
     "ts-loader": "^5.3.3",

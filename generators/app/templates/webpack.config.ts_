@@ -2,13 +2,18 @@
 
 import * as webpack from 'webpack'
 import * as path from 'path'
+import * as fs from 'fs'
 
 import CircularDependencyPlugin = require('circular-dependency-plugin')
+import PostCompile = require('post-compile-webpack-plugin')
 
 import 'zotero-plugin/make-dirs'
 import 'zotero-plugin/copy-assets'
 import 'zotero-plugin/rdf'
 import 'zotero-plugin/version'
+
+const target_dir = 'build/content'
+const webpack_js = 'webpack.js'
 
 const config = {
   mode: 'development',
@@ -22,7 +27,9 @@ const config = {
     noEmitOnErrors: true,
     namedModules: true,
     namedChunks: true,
-    // runtimeChunk: false,
+    runtimeChunk: {
+      name: 'webpack',
+    },
   },
 
   resolve: {
@@ -33,8 +40,7 @@ const config = {
 
   resolveLoader: {
     alias: {
-      'pegjs-loader': path.join(__dirname, './zotero-webpack/loader/pegjs.ts'),
-      'json-loader': path.join(__dirname, './zotero-webpack/loader/json.ts'),
+      'json-loader': 'zotero-plugin/loader/json',
       'wrap-loader': 'zotero-plugin/loader/wrap',
     },
   },
@@ -47,6 +53,16 @@ const config = {
 
   plugins: [
     new CircularDependencyPlugin({ failOnError: true }),
+    new PostCompile(() => {
+      let js = fs.readFileSync(`${target_dir}/${webpack_js}`, 'utf-8')
+
+      const prefix = 'if (!Zotero.WebPacked<%= id %>) {\n\n'
+      const postfix = '\n\n}\n'
+
+      if (!js.startsWith(prefix)) js = `${prefix}${js}${postfix}`
+
+      fs.writeFileSync(`${target_dir}/${webpack_js}`, js)
+    }),
   ],
 
   context: path.resolve(__dirname, './content'),
@@ -57,7 +73,7 @@ const config = {
 
   output: {
     globalObject: 'Zotero',
-    path: path.resolve(__dirname, './build/content'),
+    path: path.resolve(__dirname, `./${target_dir}`),
     filename: '[name].js',
     jsonpFunction: 'WebPacked<%= id %>',
     devtoolLineToLine: true,
