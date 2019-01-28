@@ -24,7 +24,7 @@
   "dependencies": {
     "@types/yeoman-generator": "^3.0.1",
     "inquirer-npm-name": "^3.0.0",
-    "jest": "^23.6.0",
+    "jest": "^24.0.0",
     "lodash": "^4.17.11",
     "typescript": "^3.2.4",
     "yeoman-assert": "^3.1.1",
@@ -37,11 +37,11 @@
     "circular-dependency-plugin": "^5.0.2",
     "rimraf": "^2.6.3",
     "ts-loader": "^5.3.3",
-    "ts-node": "^8.0.1",
+    "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "typescript": "^3.2.4",
     "webpack": "^4.29.0",
-    "zotero-plugin": "0.0.70",
+    "zotero-plugin": "0.0.71",
     "webpack-cli": "^3.2.1"
   },
   "scripts": {
