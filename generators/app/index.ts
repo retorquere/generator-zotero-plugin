@@ -43,7 +43,7 @@ export = class ZoteroPlugin extends Generator {
     this.props.label = this.props.name.replace(prefix, '').replace(/(^|-)([a-z])/g, g => g.toUpperCase().replace(/-/g, ' ')).trim()
     this.props.id = this.props.label.replace(/ /g, '')
 
-    this.props.owner = this.user.git.name()
+    this.props.owner = this.user.github.username()
     this.props.email = this.user.git.email()
     this.props.key = this.props.name.replace(/-/g, '.')
   }
