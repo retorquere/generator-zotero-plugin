@@ -1,9 +1,9 @@
-<%= name %>
+<%= plugin.humanName %>
 =================
 
-Install by downloading the [latest version](https://github.com/<%= owner %>/<%= name %>/releases/latest)
+Install by downloading the [latest version](https://github.com/<%= user.username %>/<%= plugin.name %>/releases/latest)
 
-<%= description %>
+<%= plugin.description %>
 
 # Support - read carefully
 

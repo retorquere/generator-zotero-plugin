@@ -14,13 +14,28 @@ function makePluginName(name) {
 }
 
 export = class ZoteroPlugin extends Generator {
-  private props: { [key: string]: string } = {}
+  private props = {
+    plugin: {
+      name: '',
+      humanName: '',
+      description: '',
+    },
+    code: {
+      namespace: '',
+      localePrefix: '',
+    },
+    user: {
+      username: '',
+      email: '',
+      name: '',
+    },
+  }
 
   public async prompting() {
     // Have Yeoman greet the user.
     this.log(yosay('Welcome to the zotero-plugin generator!'))
 
-    this.props.name = (await askName({
+    this.props.plugin.name = (await askName({
       name: 'name',
       message: 'Your plugin name',
       default: makePluginName(path.basename(process.cwd())),
@@ -37,47 +52,48 @@ export = class ZoteroPlugin extends Generator {
     ]
 
     for (const [name, value] of Object.entries(await this.prompt(prompts))) {
-      this.props[name] = value
+      this.props.plugin[name] = value
     }
 
-    this.props.label = this.props.name.replace(prefix, '').replace(/(^|-)([a-z])/g, g => g.toUpperCase().replace(/-/g, ' ')).trim()
-    this.props.id = this.props.label.replace(/ /g, '')
+    this.props.plugin.humanName = this.props.plugin.name.replace(prefix, '').replace(/(^|-)([a-z])/g, g => g.toUpperCase().replace(/-/g, ' ')).trim()
+    this.props.code.namespace = this.props.plugin.humanName.replace(/ /g, '')
+    this.props.code.localePrefix = this.props.plugin.name.replace(/-/g, '.')
 
-    this.props.owner = await this.user.github.username()
-    this.props.email = this.user.git.email()
-    this.props.key = this.props.name.replace(/-/g, '.')
+    this.props.user.username = await this.user.github.username()
+    this.props.user.name = await this.user.git.name()
+    this.props.user.email = this.user.git.email()
   }
 
   public writing() {
     const package_json = {
-      name: this.props.name,
+      name: this.props.plugin.name,
       version: '0.0.1',
-      description: this.props.description,
+      description: this.props.plugin.description,
       scripts: {
         lint: 'tslint -t stylish --project .',
         prebuild: 'npm run lint',
         build: 'webpack',
-        postbuild: `zotero-plugin-zipup build ${this.props.name}`,
+        postbuild: `zotero-plugin-zipup build ${this.props.plugin.name}`,
         release: 'zotero-plugin-release',
         postversion: 'git push --follow-tags',
       },
       repository: {
         type: 'git',
-        url: `git@github.com:${this.user.git.name()}/${this.props.name}.git`,
+        url: `https://github.com/${this.props.user.username}/${this.props.plugin.name}.git`,
       },
       author: {
-        name: this.user.git.name(),
-        email: this.user.git.email(),
+        name: this.props.user.name,
+        email: this.props.user.email,
       },
       bugs: {
-        url: `https://github.com/${this.user.git.name()}/${this.props.name}/issues`,
+        url: `https://github.com/${this.props.user.username}/${this.props.plugin.name}/issues`,
       },
-      homepage: `https://github.com/${this.user.git.name()}/${this.props.name}`,
+      homepage: `https://github.com/${this.props.user.username}/${this.props.plugin.name}`,
       dependencies: require('../../package.json').devDependencies,
       xpi: {
-        name: `Zotero ${this.props.label}`,
-        updateLink: `https://github.com/${this.user.git.name()}/${this.props.name}/releases/download/v{version}/zotero-auto-index-{version}.xpi`,
-        releaseURL: `https://github.com/${this.user.git.name()}/${this.props.name}/releases/download/release/`,
+        name: `${this.props.plugin.humanName} for Zotero`,
+        updateLink: `https://github.com/${this.props.user.username}/${this.props.plugin.name}/releases/download/v{version}/zotero-auto-index-{version}.xpi`,
+        releaseURL: `https://github.com/${this.props.user.username}/${this.props.plugin.name}/releases/download/release/`,
       },
     }
     this.fs.writeJSON(this.destinationPath('package.json'), package_json)
@@ -91,7 +107,7 @@ export = class ZoteroPlugin extends Generator {
       'locale/en-US/index.dtd',
     ]
     for (const src of templates) {
-      const tgt = src.replace('/index.', `/${this.props.name}.`).replace('.ts_', '.ts')
+      const tgt = src.replace('/index.', `/${this.props.plugin.name}.`).replace('.ts_', '.ts')
       this.fs.copyTpl(this.templatePath(src), this.destinationPath(tgt), this.props)
     }
     const files = [

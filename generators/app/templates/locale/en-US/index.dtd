@@ -1,1 +1,1 @@
-<!ENTITY <%= key %> "<%= description %>">
+<!ENTITY <%= code.localePrefix %> "<%= plugin.description %>">

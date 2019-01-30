@@ -1,7 +1,7 @@
 declare const Zotero: any
 declare const Components: any
 
-const marker = '<%= id %>MonkeyPatched'
+const marker = '<%= code.namespace %>MonkeyPatched'
 
 function patch(object, method, patcher) {
   if (object[method][marker]) return
@@ -9,7 +9,7 @@ function patch(object, method, patcher) {
   object[method][marker] = true
 }
 
-export let <%= id %> = Zotero.<%= id %> || new class { // tslint:disable-line:variable-name
+export let <%= code.namespace %> = Zotero.<%= code.namespace %> || new class { // tslint:disable-line:variable-name
   private initialized: boolean = false
 
   constructor() {
