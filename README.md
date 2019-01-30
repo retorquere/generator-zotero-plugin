@@ -16,6 +16,8 @@ npm install -g generator-zotero-plugin
 Then generate your new project:
 
 ```bash
+mkdir zotero-my-fantastic-plugin
+cd zotero-my-fantastic-plugin
 yo zotero-plugin
 ```
 
