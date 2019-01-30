@@ -18,7 +18,7 @@ export = class ZoteroPlugin extends Generator {
 
   public async prompting() {
     // Have Yeoman greet the user.
-    this.log(yosay('Welcome to the wicked zotero-plugin generator!'))
+    this.log(yosay('Welcome to the zotero-plugin generator!'))
 
     this.props.name = (await askName({
       name: 'name',
@@ -43,7 +43,7 @@ export = class ZoteroPlugin extends Generator {
     this.props.label = this.props.name.replace(prefix, '').replace(/(^|-)([a-z])/g, g => g.toUpperCase().replace(/-/g, ' ')).trim()
     this.props.id = this.props.label.replace(/ /g, '')
 
-    this.props.owner = this.user.github.username()
+    this.props.owner = await this.user.github.username()
     this.props.email = this.user.git.email()
     this.props.key = this.props.name.replace(/-/g, '.')
   }
