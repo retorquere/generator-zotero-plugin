@@ -7,5 +7,6 @@
 	
 	<!-- Include the main extension logic -->
   <script src="chrome://zotero/content/include.js"/>
+  <script src="chrome://<%= plugin.name %>/content/webpack.js"/>
   <script src="chrome://<%= plugin.name %>/content/<%= code.namespace %>.js"/>
 </overlay>
