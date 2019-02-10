@@ -115,10 +115,11 @@ export = class ZoteroPlugin extends Generator {
       'tslint.json',
       'dot-travis.yml',
       'dot-gitignore',
+      'dot-github/label-gun.yml',
       'skin/default/overlay.css',
     ]
     for (const src of files) {
-      const tgt = src.replace('dot-', '.')
+      const tgt = src.replace(/dot-/g, '.')
       this.fs.copy(this.templatePath(src), this.destinationPath(tgt))
     }
   }
