@@ -43,17 +43,8 @@ export = class ZoteroPlugin extends Generator {
       validate: str => (str.length > prefix.length),
     }, this)).name
 
-    const prompts = [
-      {
-        type: 'input',
-        name: 'description',
-        message: 'Description',
-      },
-    ]
-
-    for (const [name, value] of Object.entries(await this.prompt(prompts))) {
-      this.props.plugin[name] = value
-    }
+    const response = await this.prompt({ type: 'input', name: 'description', message: 'Description' })
+    this.props.plugin.description = response.description
 
     this.props.plugin.humanName = this.props.plugin.name.replace(prefix, '').replace(/(^|-)([a-z])/g, g => g.toUpperCase().replace(/-/g, ' ')).trim()
     this.props.code.namespace = this.props.plugin.humanName.replace(/ /g, '')
