@@ -13,7 +13,7 @@ function makePluginName(name) {
   return name
 }
 
-export = class ZoteroPlugin extends Generator {
+class ZoteroPlugin extends Generator {
   private props = {
     plugin: {
       name: '',
@@ -123,3 +123,5 @@ export = class ZoteroPlugin extends Generator {
     })
   }
 }
+
+export = ZoteroPlugin
