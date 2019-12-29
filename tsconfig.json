@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowUnreachableCode": false,
     "declaration": true,
     "importHelpers": true,
     "target": "es2017",
