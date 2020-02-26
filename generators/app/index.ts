@@ -50,7 +50,15 @@ class ZoteroPlugin extends Generator {
     this.props.code.namespace = this.props.plugin.humanName.replace(/ /g, '')
     this.props.code.localePrefix = this.props.plugin.name.replace(/-/g, '.')
 
-    this.props.user.username = await this.user.github.username()
+    try {
+      this.props.user.username = await this.user.github.username()
+    } catch (error) {
+      this.log('\nWARNING: An error occurred while resolving your GitHub username.')
+      this.log(error)
+
+      this.log('Using \"TOCHANGE\" as default username, please replace it later.\n')
+      this.props.user.username = 'TOCHANGE'
+    }
     this.props.user.name = await this.user.git.name()
     this.props.user.email = this.user.git.email()
   }
