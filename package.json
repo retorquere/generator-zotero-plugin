@@ -46,7 +46,7 @@
   },
   "scripts": {
     "lint": "tslint -t stylish --project .",
-    "test": "npm run lint",
+    "test": "npm start && npm run lint",
     "preversion": "npm test",
     "postversion": "git push --follow-tags",
     "prestart": "npm run lint",
