@@ -1,4 +1,5 @@
 node_modules
 coverage
 *.js
-generators/app/*.d.ts
+app/*.d.ts
+generator-temp

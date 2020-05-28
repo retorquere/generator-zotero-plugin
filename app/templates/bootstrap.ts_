@@ -1,0 +1,52 @@
+/* Copyright 2012 Will Shanks.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+declare const Components: any
+declare const Services: any
+Components.utils.import('resource://gre/modules/Services.jsm')
+
+enum Reason {
+  APP_STARTUP     = 1, // The application is starting up.
+  APP_SHUTDOWN    = 2, // The application is shutting down.
+  ADDON_ENABLE    = 3, // The add-on is being enabled.
+  ADDON_DISABLE   = 4, // The add-on is being disabled. (Also sent during uninstallation)
+  ADDON_INSTALL   = 5, // The add-on is being installed.
+  ADDON_UNINSTALL = 6, // The add-on is being uninstalled.
+  ADDON_UPGRADE   = 7, // The add-on is being upgraded.
+  ADDON_DOWNGRADE = 8, // The add-on is being downgraded.
+}
+
+type BootstrapData = {
+  id: string          // The ID of the add-on being bootstrapped.
+  version:string      // The version of the add-on being bootstrapped.
+  installPath: any    // nsIFile; The installation location of the add-on being bootstrapped. This may be a directory or an XPI file depending on whether the add-on is installed unpacked or not.
+  resourceURI: any    // nsIURI; A URI pointing at the root of the add-ons files, this may be a jar: or file: URI depending on whether the add-on is installed unpacked or not.
+  oldVersion: string  // The previously installed version, if the reason is ADDON_UPGRADE or ADDON_DOWNGRADE, and the method is install or startup.
+  newVersion: string  // The version to be installed, if the reason is ADDON_UPGRADE or ADDON_DOWNGRADE, and the method is shutdown or uninstall.
+}
+
+// tslint:disable-next-line:no-empty
+async function install(data: BootstrapData, reason: Reason) {
+
+}
+
+async function startup(data: BootstrapData, reason: Reason) {
+  await Zotero.
+  Components.utils.loadSubScript('chrome://<%= plugin.name %>/content/<%= code.namespace%>.js')
+}
+
+async function shutdown(data: BootstrapData, reason: Reason) {
+  if (reason == APP_SHUTDOWN) return
+
+  AsyncShutdown.profileBeforeChange.addBlocker('AddonManager: shutting down <%= code.namespace %>', async function() {
+    <%= code.namespace %>.shutdown()
+    Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService).flushBundles()
+    Components.utils.unload('chrome://<%= plugin.name %>/content/<%= code.namespace%>.js')
+  })
+}
+
+// tslint:disable-next-line:no-empty
+async function uninstall(data: BootstrapData, reason: Reason) {
+}

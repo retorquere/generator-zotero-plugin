@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
     "allowUnreachableCode": false,
     "declaration": true,
     "importHelpers": true,
@@ -18,7 +19,7 @@
     ]
   },
   "include": [
-    "generators/**/*"
+    "app/**/*"
   ],
   "exclude": [
     "node_modules",

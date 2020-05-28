@@ -9,9 +9,9 @@
     "url": "https://retorque.re"
   },
   "files": [
-    "generators"
+    "app"
   ],
-  "main": "generators/app/index.js",
+  "main": "app/index.js",
   "keywords": [
     "zotero",
     "yeoman",
@@ -27,26 +27,29 @@
     "jest": "^26.0.1",
     "lodash": "^4.17.15",
     "tslib": "^2.0.0",
-    "typescript": "^3.9.3",
-    "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^4.10.1",
+    "yeoman-assert": "^3.1.1",
     "yeoman-test": "^2.6.0",
     "yosay": "^2.0.2"
   },
   "devDependencies": {
-    "post-compile-webpack-plugin": "^0.1.2",
+    "typescript": "^3.9.3",
+    "@types/mocha": "^7.0.2",
     "circular-dependency-plugin": "^5.2.0",
+    "mocha": "^7.2.0",
+    "mock-require": "^3.0.3",
+    "post-compile-webpack-plugin": "^0.1.2",
     "rimraf": "^3.0.2",
     "ts-loader": "^7.0.5",
-    "ts-node": "^8.10.1",
+    "ts-node": "^8.10.2",
     "tslint": "^6.1.2",
     "webpack": "^4.43.0",
-    "zotero-plugin": "1.0.20",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "zotero-plugin": "1.0.21"
   },
   "scripts": {
     "lint": "tslint -t stylish --project .",
-    "test": "npm start && npm run lint",
+    "test": "npm start && npm run lint && mocha -r ts-node/register tests/**/*.test.ts",
     "preversion": "npm test",
     "postversion": "git push --follow-tags",
     "prestart": "npm run lint",
