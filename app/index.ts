@@ -118,7 +118,7 @@ class ZoteroPlugin extends Generator {
 
     if (this.props.code.bootstrapped) {
       templates.push('bootstrap.ts_')
-      templates.push(`content/bootstrap.ts_`)
+      templates.push('content/bootstrap.ts_')
     } else {
       templates.push('content/overlay.xul')
       templates.push('content/overlay.ts_')
