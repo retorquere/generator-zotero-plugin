@@ -33,15 +33,16 @@ async function install(data: BootstrapData, reason: Reason) {
 }
 
 async function startup(data: BootstrapData, reason: Reason) {
-  await Zotero.
+  await Zotero.Schema.schemaUpdatePromise
   Components.utils.loadSubScript('chrome://<%= plugin.name %>/content/<%= code.namespace%>.js')
+  await <%= code.namespace %>.startup()
 }
 
 async function shutdown(data: BootstrapData, reason: Reason) {
-  if (reason == APP_SHUTDOWN) return
+  if (reason === APP_SHUTDOWN) return
 
-  AsyncShutdown.profileBeforeChange.addBlocker('AddonManager: shutting down <%= code.namespace %>', async function() {
-    <%= code.namespace %>.shutdown()
+  AsyncShutdown.profileBeforeChange.addBlocker('AddonManager: shutting down <%= code.namespace %>', async () => {
+    await <%= code.namespace %>.shutdown()
     Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService).flushBundles()
     Components.utils.unload('chrome://<%= plugin.name %>/content/<%= code.namespace%>.js')
   })

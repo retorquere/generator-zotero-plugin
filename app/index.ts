@@ -46,7 +46,7 @@ class ZoteroPlugin extends Generator {
 
     const answers = await this.prompt([
       { type: 'input', name: 'description', message: 'Description' },
-      { type: 'list', name: 'kind', message: 'Do you want a boostrapped or an overlay extension?', choices: ['bootstrapped', 'overlay' ] },
+      { type: 'list', name: 'kind', message: 'Do you want a bootstrapped or an overlay extension?', choices: ['bootstrapped', 'overlay' ] },
     ])
 
     this.props.plugin.description = answers.description
@@ -118,13 +118,17 @@ class ZoteroPlugin extends Generator {
 
     if (this.props.code.bootstrapped) {
       templates.push('bootstrap.ts_')
+      templates.push(`content/bootstrap.ts_`)
     } else {
       templates.push('content/overlay.xul')
-      templates.push('content/index.ts_')
+      templates.push('content/overlay.ts_')
     }
 
     for (const src of templates) {
-      const tgt = src.replace('/index.', `/${this.props.plugin.name}.`).replace('.ts_', '.ts')
+      const tgt = src
+        .replace('/bootstrap.', `/${this.props.plugin.name}.`)
+        .replace('/overlay.', `/${this.props.plugin.name}.`)
+        .replace('.ts_', '.ts')
       this.fs.copyTpl(this.templatePath(src), this.destinationPath(tgt), this.props)
     }
     const files = [

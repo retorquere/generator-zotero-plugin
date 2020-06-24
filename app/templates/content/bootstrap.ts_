@@ -1,0 +1,25 @@
+declare const Zotero: any
+declare const Components: any
+
+const marker = 'Unpatched<%= code.namespace %>'
+
+function patch(object, method, patcher) {
+  if (object[method][marker]) return
+  object[method][marker] = object[method]
+  object[method] = patcher(object[method])
+}
+
+function unpatch(object, method) {
+  while (object[method][marker]) {
+    object[method] = object[method][marker]
+  }
+}
+
+// this needs to be var, not const or let, otherwise loadSubScript won't put it in the calling scope
+var <%= code.namespace %> = Zotero.<%= code.namespace %> || new class { // tslint:disable-line:variable-name
+  public async startup() {
+  }
+
+  public async shutdown() {
+  }
+}
