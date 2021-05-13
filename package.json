@@ -41,7 +41,7 @@
     "esbuild": "^0.11.20",
     "eslint": "^7.26.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsdoc": "^34.0.2",
+    "eslint-plugin-jsdoc": "^34.1.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "mkdirp": "^1.0.4",
     "rimraf": "^3.0.2",
