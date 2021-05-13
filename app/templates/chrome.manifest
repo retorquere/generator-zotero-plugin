@@ -2,4 +2,4 @@ content	<%= plugin.name %>				content/
 locale	<%= plugin.name %>	en-US		locale/en-US/
 skin	<%= plugin.name %>	default		skin/
 
-overlay	chrome://zotero/content/zoteroPane.xul	chrome://<%= plugin.name %>/content/overlay.xul
+overlay	chrome://zotero/content/zoteroPane.xul	chrome://<%= plugin.name %>/content/<%= plugin.name %>.xul

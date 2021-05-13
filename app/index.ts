@@ -1,15 +1,14 @@
-import Generator = require('yeoman-generator')
-import yosay = require('yosay')
-import askName = require('inquirer-npm-name')
+import Generator from 'yeoman-generator'
+import yosay from 'yosay'
+import askName from 'inquirer-npm-name'
 import * as _ from 'lodash'
 import * as path from 'path'
-import extend = require('deep-extend')
 
 const prefix = 'zotero-'
 
-function makePluginName(name) {
+function makePluginName(name: string): string {
   name = _.kebabCase(name)
-  name = name.indexOf(prefix) === 0 ? name : prefix + name
+  if (!name.startsWith(prefix)) name = `${prefix}${name}`
   return name
 }
 
@@ -32,7 +31,7 @@ class ZoteroPlugin extends Generator {
     },
   }
 
-  public async prompting() {
+  public async prompting(): Promise<void> {
     // Have Yeoman greet the user.
     this.log(yosay('Welcome to the zotero-plugin generator!'))
 
@@ -57,26 +56,27 @@ class ZoteroPlugin extends Generator {
 
     try {
       this.props.user.username = await this.user.github.username()
-    } catch (error) {
+    }
+    catch (error) {
       this.log('\nWARNING: An error occurred while resolving your GitHub username.')
       this.log(error)
 
-      this.log('Using \"TOCHANGE\" as default username, please replace it later.\n')
+      this.log('Using "TOCHANGE" as default username, please replace it later.\n')
       this.props.user.username = 'TOCHANGE'
     }
-    this.props.user.name = await this.user.git.name()
+    this.props.user.name = this.user.git.name()
     this.props.user.email = this.user.git.email()
   }
 
-  public writing() {
+  public writing(): void {
     const package_json = {
       name: this.props.plugin.name,
       version: '0.0.1',
       description: this.props.plugin.description,
       scripts: {
-        lint: 'tslint -t stylish --project .',
+        lint: 'eslint . --ext .ts --cache --cache-location .eslintcache/',
         prebuild: 'npm run lint',
-        build: 'webpack',
+        build: 'tsc --noEmit && node esbuild.js',
         postbuild: `zotero-plugin-zipup build ${this.props.plugin.name}`,
         release: 'zotero-plugin-release',
         postversion: 'git push --follow-tags',
@@ -104,14 +104,15 @@ class ZoteroPlugin extends Generator {
 
     if (this.props.code.bootstrapped) {
       package_json.xpi.bootstrapped = true
-    } else {
+    }
+    else {
       delete package_json.xpi.bootstrapped
     }
     this.fs.writeJSON(this.destinationPath('package.json'), package_json)
 
     const templates = [
       'README.md',
-      'webpack.config.ts_',
+      'esbuild.js_',
       'chrome.manifest',
       'locale/en-US/index.dtd',
     ]
@@ -119,7 +120,8 @@ class ZoteroPlugin extends Generator {
     if (this.props.code.bootstrapped) {
       templates.push('bootstrap.ts_')
       templates.push('content/bootstrap.ts_')
-    } else {
+    }
+    else {
       templates.push('content/overlay.xul')
       templates.push('content/overlay.ts_')
     }
@@ -128,30 +130,35 @@ class ZoteroPlugin extends Generator {
       const tgt = src
         .replace('/bootstrap.', `/${this.props.plugin.name}.`)
         .replace('/overlay.', `/${this.props.plugin.name}.`)
+        .replace('/index.', `/${this.props.plugin.name}.`)
         .replace('.ts_', '.ts')
+        .replace('.js_', '.js')
       this.fs.copyTpl(this.templatePath(src), this.destinationPath(tgt), this.props)
     }
     const files = [
       'tsconfig.json',
-      'tslint.json',
-      'dot-travis.yml',
       'dot-gitignore',
-      'dot-github/label-gun.yml',
+      'dot-github/workflows/release.yml',
       'skin/default/overlay.css',
     ]
     for (const src of files) {
       const tgt = src.replace(/dot-/g, '.')
       this.fs.copy(this.templatePath(src), this.destinationPath(tgt))
     }
+    const copy = [
+      '.eslintrc.json',
+      '.eslintignore',
+    ]
+    for (const src of copy) {
+      this.fs.copy(path.join(__dirname, '..', src), this.destinationPath(src))
+    }
   }
 
-  public install() {
-    this.installDependencies({
-      npm: true,
-      bower: false,
-      yarn: false,
-    })
+  /*
+  public install(): void {
+    this.installDependencies({ npm: true })
   }
+  */
 }
 
 export = ZoteroPlugin

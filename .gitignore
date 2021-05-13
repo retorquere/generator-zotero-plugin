@@ -3,3 +3,4 @@ coverage
 *.js
 app/*.d.ts
 generator-temp
+.eslintcache

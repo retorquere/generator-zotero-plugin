@@ -50,7 +50,7 @@
     "zotero-plugin": "^1.0.43"
   },
   "scripts": {
-    "lint": "tslint -t stylish --project .",
+    "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
     "test": "npm start && npm run lint && mocha -r ts-node/register tests/**/*.test.ts",
     "preversion": "npm test",
     "postversion": "git push --follow-tags",

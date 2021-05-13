@@ -6,6 +6,7 @@
     "importHelpers": true,
     "target": "es2017",
     "disableSizeLimit": true,
+    "esModuleInterop": true,
     "module": "commonjs",
     "noImplicitAny": false,
     "removeComments": false,
@@ -19,11 +20,13 @@
     ]
   },
   "include": [
-    "app/**/*"
+    "app",
+    "tests"
   ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
-    "typings"
+    "typings",
+    "generator-temp/**/*.ts"
   ]
 }

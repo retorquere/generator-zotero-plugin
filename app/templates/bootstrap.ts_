@@ -1,11 +1,8 @@
-/* Copyright 2012 Will Shanks.
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 
 declare const Components: any
-declare const Services: any
-Components.utils.import('resource://gre/modules/Services.jsm')
+// declare const Services: any
+// Components.utils.import('resource://gre/modules/Services.jsm')
 
 enum Reason {
   APP_STARTUP     = 1, // The application is starting up.
@@ -27,27 +24,28 @@ type BootstrapData = {
   newVersion: string  // The version to be installed, if the reason is ADDON_UPGRADE or ADDON_DOWNGRADE, and the method is shutdown or uninstall.
 }
 
-// tslint:disable-next-line:no-empty
+const main = 'chrome://<%= plugin.name %>/content/<%= plugin.name%>.js'
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
 async function install(data: BootstrapData, reason: Reason) {
-
 }
 
-async function startup(data: BootstrapData, reason: Reason) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+async function startup(_data: BootstrapData, _reason: Reason) {
   await Zotero.Schema.schemaUpdatePromise
-  Components.utils.loadSubScript('chrome://<%= plugin.name %>/content/<%= code.namespace%>.js')
-  await <%= code.namespace %>.startup()
+  Components.utils.loadSubScript(main)
+  await Zotero.<%= code.namespace %>.startup()
 }
 
-async function shutdown(data: BootstrapData, reason: Reason) {
-  if (reason === APP_SHUTDOWN) return
-
-  AsyncShutdown.profileBeforeChange.addBlocker('AddonManager: shutting down <%= code.namespace %>', async () => {
-    await <%= code.namespace %>.shutdown()
-    Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService).flushBundles()
-    Components.utils.unload('chrome://<%= plugin.name %>/content/<%= code.namespace%>.js')
-  })
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/require-await
+async function shutdown(_data: BootstrapData, _reason: Reason) {
+  if (typeof Zotero.<%= code.namespace %>.shutdown === 'function') await Zotero.<%= code.namespace %>.shutdown()
+  Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService).flushBundles()
+  Components.utils.unload(main)
+  Zotero.<%= code.namespace %> = null
 }
 
-// tslint:disable-next-line:no-empty
-async function uninstall(data: BootstrapData, reason: Reason) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+async function uninstall(_data: BootstrapData, _reason: Reason) {
+  if (typeof Zotero.<%= code.namespace %>.uninstall === 'function') await Zotero.<%= code.namespace %>.uninstall()
 }
