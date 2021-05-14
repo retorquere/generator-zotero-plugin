@@ -2,25 +2,26 @@ const path = require('path')
 const fs = require('fs')
 const esbuild = require('esbuild')
 
-async function getFiles(dir) {
-  const dirents = await fs.promises.readdir(dir, { withFileTypes: true })
-  const files = await Promise.all(dirents.map((dirent) => {
-    const res = path.resolve(dir, dirent.name)
-    return dirent.isDirectory() ? getFiles(res) : res
-  }))
-  return Array.prototype.concat(...files)
-}
+require('zotero-plugin/copy-assets')
+require('zotero-plugin/rdf')
+require('zotero-plugin/version')
 
 async function build() {
   await esbuild.build({
     bundle: true,
     format: 'iife',
-    // globalName: 'Zotero.<%= code.namespace%>',
     target: ['firefox60'],
+<%_ if (code.bootstrapped) { -%>
+    entryPoints: [ 'bootstrap.ts' ],
+    outdir: 'build',
+    globalName: 'install__startup__shutdown__uninstall',
+    footer: { js: 'var { install, startup, shutdown, uninstall } = install__startup__shutdown__uninstall;' },
+<%_ } else { -%>
     entryPoints: [ 'content/<%= plugin.name %>.ts' ],
     outdir: 'build/content',
     banner: { js: 'if (!Zotero.<%= code.namespace%>) {\n' },
     footer: { js: '\n}' },
+<%_ } -%>
   })
 }
 

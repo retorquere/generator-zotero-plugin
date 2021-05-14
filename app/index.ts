@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Generator from 'yeoman-generator'
 import yosay from 'yosay'
 import askName from 'inquirer-npm-name'
@@ -119,7 +120,6 @@ class ZoteroPlugin extends Generator {
 
     if (this.props.code.bootstrapped) {
       templates.push('bootstrap.ts_')
-      templates.push('content/bootstrap.ts_')
     }
     else {
       templates.push('content/overlay.xul')
@@ -128,7 +128,6 @@ class ZoteroPlugin extends Generator {
 
     for (const src of templates) {
       const tgt = src
-        .replace('/bootstrap.', `/${this.props.plugin.name}.`)
         .replace('/overlay.', `/${this.props.plugin.name}.`)
         .replace('/index.', `/${this.props.plugin.name}.`)
         .replace('.ts_', '.ts')
