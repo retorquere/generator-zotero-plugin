@@ -38,16 +38,16 @@
     "@types/mocha": "^8.2.2",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
-    "esbuild": "^0.11.20",
+    "esbuild": "^0.11.21",
     "eslint": "^7.26.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsdoc": "^34.1.0",
+    "eslint-plugin-import": "^2.23.0",
+    "eslint-plugin-jsdoc": "^34.2.2",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "mkdirp": "^1.0.4",
     "rimraf": "^3.0.2",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4",
-    "zotero-plugin": "^1.0.43"
+    "zotero-plugin": "^1.0.47"
   },
   "scripts": {
     "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
