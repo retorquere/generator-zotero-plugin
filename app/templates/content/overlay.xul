@@ -2,11 +2,29 @@
 <?xml-stylesheet href="chrome://<%= plugin.name %>/skin/overlay.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://<%= plugin.name %>/locale/<%= plugin.name %>.dtd">
 
-<overlay id="<%= plugin.name %>-overlay"
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay id="<%= plugin.name %>-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script>
+    <%_ const zoteropane = plugin.name.replace(/-/g, '_') + '_zoteropane' -%>
+    var globals = Function('return this')();
+    var <%= zoteropane %> = null;
+  </script>
+  <stringbundleset>
+    <stringbundle id="<%= plugin.name %>-strings" src="chrome://<%= plugin.name %>/locale/<%= plugin.name %>.properties"/>
+  </stringbundleset>
 	
 	<!-- Include the main extension logic -->
   <script src="chrome://zotero/content/include.js"/>
-  <script src="chrome://<%= plugin.name %>/content/webpack.js"/>
-  <script src="chrome://<%= plugin.name %>/content/<%= code.namespace %>.js"/>
+  <script src="chrome://<%= plugin.name %>/content/<%= plugin.name %>.js"/>
+  <script>
+    (new Promise((resolve, reject) => { window.addEventListener('load', resolve) }))
+      .then(() => Zotero.debug('<%= plugin.name %> startup'))
+      .then(() => Zotero.<%= code.namespace %>.load(globals))
+      .then(() => Zotero.debug('<%= plugin.name %> started'))
+      .catch(err => Zotero.debug(`starting <%= plugin.name %>, error: ${err.message}\n${err.stack ||''}`))
+
+      .then(() => Zotero.debug('<%= plugin.name %>: loading zoteroPane'))
+      .then(() => <%= zoteropane %> = new Zotero.BetterBibTeX.ZoteroPane(globals))
+      .then(() => Zotero.debug('<%= plugin.name %>: zoteroPane loaded'))
+      .catch(err => Zotero.debug(`<%= plugin.name %>: loading zoteroPane error: ${err.message}\n${err.stack ||''}`))
+  </script>
 </overlay>

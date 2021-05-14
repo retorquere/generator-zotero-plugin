@@ -1,30 +1,29 @@
 declare const Zotero: any
-declare const Components: any
+// declare const Components: any
 
-const marker = '<%= code.namespace %>MonkeyPatched'
+const monkey_patch_marker = '<%= code.namespace %>MonkeyPatched'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function patch(object, method, patcher) {
-  if (object[method][marker]) return
+  if (object[method][monkey_patch_marker]) return
   object[method] = patcher(object[method])
-  object[method][marker] = true
+  object[method][monkey_patch_marker] = true
 }
 
-const <%= code.namespace %> = Zotero.<%= code.namespace %> || new class { // tslint:disable-line:variable-name
-  private initialized: boolean = false
+class <%= code.namespace %> { // tslint:disable-line:variable-name
+  private initialized = false
+  private globals: Record<string, any>
+  private strings: any
 
-  constructor() {
-    window.addEventListener('load', event => {
-      this.init().catch(err => Zotero.logError(err))
-    }, false)
-  }
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async load(globals: Record<string, any>) {
+    this.globals = globals
 
-  private async init() {
     if (this.initialized) return
     this.initialized = true
+
+    this.strings = globals.document.getElementById('<%= plugin.name %>-strings')
   }
 }
 
-export = <%= code.namespace %>
-
-// otherwise this entry point won't be reloaded: https://github.com/webpack/webpack/issues/156
-delete require.cache[module.id]
+Zotero.<%= code.namespace %> = new <%= code.namespace %>
