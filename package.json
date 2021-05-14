@@ -9,7 +9,9 @@
     "url": "https://retorque.re"
   },
   "files": [
-    "app"
+    "app",
+    ".eslintignore",
+    ".eslintrc.json"
   ],
   "main": "app/index.js",
   "keywords": [
