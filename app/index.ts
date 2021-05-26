@@ -97,7 +97,7 @@ class ZoteroPlugin extends Generator {
       dependencies: require('../package.json').devDependencies,
       xpi: {
         name: `${this.props.plugin.humanName} for Zotero`,
-        updateLink: `https://github.com/${this.props.user.username}/${this.props.plugin.name}/releases/download/v{version}/zotero-${this.props.plugin.name}-{version}.xpi`,
+        updateLink: `https://github.com/${this.props.user.username}/${this.props.plugin.name}/releases/download/v{version}/${this.props.plugin.name}-{version}.xpi`,
         releaseURL: `https://github.com/${this.props.user.username}/${this.props.plugin.name}/releases/download/release/`,
         bootstrapped: false,
       },

@@ -16,15 +16,14 @@
   <script src="chrome://zotero/content/include.js"/>
   <script src="chrome://<%= plugin.name %>/content/<%= plugin.name %>.js"/>
   <script>
-    (new Promise((resolve, reject) => { window.addEventListener('load', resolve) }))
-      .then(() => Zotero.debug('<%= plugin.name %> startup'))
-      .then(() => Zotero.<%= code.namespace %>.load(globals))
-      .then(() => Zotero.debug('<%= plugin.name %> started'))
-      .catch(err => Zotero.debug(`starting <%= plugin.name %>, error: ${err.message}\n${err.stack ||''}`))
-
-      .then(() => Zotero.debug('<%= plugin.name %>: loading zoteroPane'))
-      .then(() => <%= zoteropane %> = new Zotero.BetterBibTeX.ZoteroPane(globals))
-      .then(() => Zotero.debug('<%= plugin.name %>: zoteroPane loaded'))
-      .catch(err => Zotero.debug(`<%= plugin.name %>: loading zoteroPane error: ${err.message}\n${err.stack ||''}`))
+    window.addEventListener('load', async function() {
+      try {
+        Zotero.debug('<%= plugin.name %> startup')
+        await Zotero.<%= code.namespace %>.load(globals)
+        Zotero.debug('<%= plugin.name %> started')
+      } catch (err) {
+        Zotero.debug(`<%= plugin.name %> ZoteroPane overlay error: ${err.message}\n${err.stack ||''}`)
+      }
+    })
   </script>
 </overlay>
