@@ -69,7 +69,7 @@ const pkg = {
   homepage: `https://github.com/${user.username}/${plugin}`,
   xpi: {
     name: 'Scaffold Plugin for Zotero',
-    updateLink: `https://github.com/${user.username}/${plugin}/releases/download/v{version}/zotero-${plugin}-{version}.xpi`,
+    updateLink: `https://github.com/${user.username}/${plugin}/releases/download/v{version}/${plugin}-{version}.xpi`,
     releaseURL: `https://github.com/${user.username}/${plugin}/releases/download/release/`,
   },
 }
