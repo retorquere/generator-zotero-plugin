@@ -59,7 +59,8 @@
     "prestart": "npm run lint",
     "start": "tsc",
     "prepublishOnly": "npm start",
-    "go": "npm start && npm version patch && npm publish",
+    "preversion": "npm start",
+    "postversion": "npm publish",
     "ncu": "ncu -u && npm i && git add package.json package-lock.json && git commit -m ncu"
   },
   "repository": "retorquere/generator-zotero-plugin",
