@@ -1,6 +1,6 @@
 {
   "name": "generator-zotero-plugin",
-  "version": "0.0.43",
+  "version": "0.0.44",
   "description": "Zotero Plugin",
   "homepage": "https://retorque.re",
   "author": {
@@ -54,13 +54,11 @@
   "scripts": {
     "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
     "test": "npm start && npm run lint && mocha -r ts-node/register tests/**/*.test.ts",
-    "preversion": "npm test",
-    "postversion": "git push --follow-tags",
+    "preversion": "npm start",
+    "postversion": "npm publish",
     "prestart": "npm run lint",
     "start": "tsc",
     "prepublishOnly": "npm start",
-    "preversion": "npm start",
-    "postversion": "npm publish",
     "ncu": "ncu -u && npm i && git add package.json package-lock.json && git commit -m ncu"
   },
   "repository": "retorquere/generator-zotero-plugin",
