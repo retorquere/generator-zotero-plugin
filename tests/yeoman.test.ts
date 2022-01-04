@@ -31,7 +31,7 @@ const common = [
   'esbuild.js',
 ]
 
-async function prepare(kind) {
+async function prepare(kind: string) {
   await helpers.run(path.join(__dirname, '../app'))
     .inDir(path.join(__dirname, '../generator-temp', kind))
     .withPrompts({
