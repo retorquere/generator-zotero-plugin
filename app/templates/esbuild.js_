@@ -19,8 +19,6 @@ async function build() {
 <%_ } else { -%>
     entryPoints: [ 'content/<%= plugin.name %>.ts' ],
     outdir: 'build/content',
-    banner: { js: 'if (!Zotero.<%= code.namespace%>) {\n' },
-    footer: { js: '\n}' },
 <%_ } -%>
   })
 }
