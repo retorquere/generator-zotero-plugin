@@ -46,7 +46,7 @@ class ZoteroPlugin extends Generator {
 
     const answers = await this.prompt([
       { type: 'input', name: 'description', message: 'Description' },
-      { type: 'list', name: 'kind', message: 'Do you want a bootstrapped or an overlay extension?', choices: ['bootstrapped', 'overlay' ] },
+      { type: 'list', name: 'kind', message: 'Do you want an overlay or a bootstrapped (inclomplete currently) extension?', choices: ['overlay', 'bootstrapped' ] },
     ])
 
     this.props.plugin.description = answers.description
