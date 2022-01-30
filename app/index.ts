@@ -137,6 +137,8 @@ class ZoteroPlugin extends Generator {
       this.fs.copyTpl(this.templatePath(src), this.destinationPath(tgt), this.props)
     }
     const files = [
+      'start.py',
+      'start.ini.sample',
       'tsconfig.json',
       'dot-gitignore',
       'dot-github/workflows/release.yml',
