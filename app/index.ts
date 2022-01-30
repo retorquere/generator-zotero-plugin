@@ -46,7 +46,7 @@ class ZoteroPlugin extends Generator {
 
     const answers = await this.prompt([
       { type: 'input', name: 'description', message: 'Description' },
-      { type: 'list', name: 'kind', message: 'Do you want an overlay or a bootstrapped (inclomplete currently) extension?', choices: ['overlay', 'bootstrapped' ] },
+      { type: 'list', name: 'kind', message: 'Do you want an overlay or a bootstrapped extension?', choices: ['overlay', 'bootstrapped' ] },
     ])
 
     this.props.plugin.description = answers.description
@@ -116,6 +116,8 @@ class ZoteroPlugin extends Generator {
       'esbuild.js_',
       'chrome.manifest',
       'locale/en-US/index.dtd',
+      'content/debug.ts',
+      'content/main.ts_',
     ]
 
     if (this.props.code.bootstrapped) {
@@ -123,11 +125,11 @@ class ZoteroPlugin extends Generator {
     }
     else {
       templates.push('content/overlay.xul')
-      templates.push('content/overlay.ts_')
     }
 
     for (const src of templates) {
       const tgt = src
+        .replace('/main.', `/${this.props.plugin.name}.`)
         .replace('/overlay.', `/${this.props.plugin.name}.`)
         .replace('/index.', `/${this.props.plugin.name}.`)
         .replace('.ts_', '.ts')

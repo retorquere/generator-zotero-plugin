@@ -1,8 +1,21 @@
 declare const Zotero: any
 
-// declare const Components: any
+declare const Components: any
 // declare const Services: any
 // Components.utils.import('resource://gre/modules/Services.jsm')
+
+const consoleService = Components.classes['@mozilla.org/consoleservice;1'].getService(Ci.nsIConsoleService)
+import { format } from './content/debug.ts'
+function debug(...msg) {
+  consoleService.logStringMessage(format(msg))
+}
+
+Components.utils.import('resource://gre/modules/AsyncShutdown.jsm')
+declare const AsyncShutdown: any
+
+function runasync(context, f) {
+  f().catch(err => debug(`${context}: ${err.message}\n${err.stack}`))
+}
 
 enum Reason {
   APP_STARTUP     = 1, // The application is starting up.
@@ -32,17 +45,54 @@ function patch(object, method, patcher) {
   object[method] = patcher(object[method])
 }
 
-class Zotero<%= code.namespace %> {
-  <%_ for (const phase of ['install', 'uninstall', 'startup', 'shutdown']) { -%>
-  public async <%= phase %>(_data: BootstrapData, _reason: Reason) {
-    await Zotero.Schema.schemaUpdatePromise
-  }
+async waitForWindow() {
+  return new Promise( resolve => {
+    // Check if window is already loaded
+    const windows = Services.wm.getEnumerator('navigator:browser');
+    while (windows.hasMoreElements()) {
+      resolve(windows.getNext())
+    }
 
-  <%_ } -%>
+    // If not, add a listener for when the window does load
+    const windowListener = {
+      onOpenWindow: xulWindow => {
+        // Wait for the window to finish loading
+        const domWindow = xulWindow.QueryInterface(Components.interfaces.nsIInterfaceRequestor).getInterface(Components.interfaces.nsIDOMWindow)
+
+        domWindow.addEventListener('load', () => {
+          domWindow.removeEventListener('load', listener, false)
+          if (domWindow.document.documentElement.getAttribute('windowtype') === 'navigator:browser') {
+            resolve(domWindow)
+          }
+        }, false)
+      },
+
+      onCloseWindow: _xulWindow => {},
+
+      onWindowTitleChange: (_xulWindow, _newTitle) => {},
+    }
+
+    // Add listener to load scripts in windows opened in the future
+    Services.wm.addListener(windowListener)
+  })
 }
 
-Zotero.<%= code.namespace %> = new Zotero<%= code.namespace %>
+function install(_data: BootstrapData, _reason: Reason) {
+}
 
-<%_ for (const phase of ['install', 'uninstall', 'startup', 'shutdown']) { -%>
-export const <%= phase %> = Zotero.<%= code.namespace %>.<%= phase %>.bind(Zotero.<%= code.namespace %>)
-<%_ } -%>
+function uninstall(_data: BootstrapData, _reason: Reason) {
+}
+
+function startup(_data: BootstrapData, _reason: Reason) {
+  runasync('<%= plugin.name %> startup', async () => {
+    const window = await waitForWindow() as {Zotero: any}
+    Services.scriptloader.loadSubScript('chrome://<%= plugin.name %>/content/<%= plugin.name %>.js', window);
+  })
+
+  AsyncShutdown.profileBeforeChange.addBlocker('<%= plugin.name %> shutdown', async () => {
+    // async shutdown here
+  })
+}
+
+function shutdown(_data: BootstrapData, _reason: Reason) {
+}

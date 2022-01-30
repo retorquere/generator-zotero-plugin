@@ -11,16 +11,22 @@ async function build() {
     bundle: true,
     format: 'iife',
     target: ['firefox60'],
+    entryPoints: [ 'content/<%= plugin.name %>.ts' ],
+    outdir: 'build/content',
+  })
 <%_ if (code.bootstrapped) { -%>
+  await esbuild.build({
+    bundle: true,
+    format: 'iife',
+    target: ['firefox60'],
     entryPoints: [ 'bootstrap.ts' ],
     outdir: 'build',
     globalName: 'install__startup__shutdown__uninstall',
     footer: { js: 'var { install, startup, shutdown, uninstall } = install__startup__shutdown__uninstall;' },
-<%_ } else { -%>
     entryPoints: [ 'content/<%= plugin.name %>.ts' ],
-    outdir: 'build/content',
-<%_ } -%>
+    outdir: 'build',
   })
+<%_ } -%>
 }
 
 build().catch(err => {
