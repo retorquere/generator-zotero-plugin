@@ -26,7 +26,7 @@ argp.add_argument('--log', default=config.get('log', 'path', fallback=None))
 args = argp.parse_args()
 
 if not args.profile_path:
-  print(args.usage())
+  argp.print_help()
   sys.exit(1)
 
 args.profile_path = os.path.expanduser(args.profile_path)
@@ -37,14 +37,42 @@ def system(cmd):
   print('$', cmd)
   subprocess.run(cmd, shell=True, check=True)
 
-settings = {
-  'extensions.autoDisableScopes': 0,
-  'extensions.enableScopes': 15,
-  'extensions.startupScanScopes': 15,
-  'extensions.lastAppBuildId': None,
-  'extensions.lastAppVersion': None,
-  'extensions.zotero.debug.log': True,
-}
+# patch preferences
+def pref_value(v):
+  if v in ['true', 'false']: return v == 'true'
+  if v == 'null': return None
+  try:
+    return int(v)
+  except ValueError:
+    pass
+  try:
+    return float(v)
+  except ValueError:
+    pass
+  try:
+    return json.loads(v)
+  except json.decoder.JSONDecodeError:
+    pass
+  return v
+
+preferences = dict(config['preferences']) if 'preferences' in config else {}
+preferences = { k: pref_value(v) for k, v in preferences.items() }
+
+def pref_name(line):
+  if not line.startswith('user_pref('): return None
+  if not line.startswith('user_pref("'): raise ValueError('unexpected user pref: ' + line)
+  open_quote = None
+  for i, c in enumerate(line):
+    if c == '"':
+      if open_quote is None:
+        open_quote = i
+      else:
+        try:
+          return json.loads(line[open_quote : i + 1])
+        except json.decoder.JSONDecodeError:
+          pass
+  raise ValueError('unexpected user pref: ' + line)
+
 for prefs in ['user', 'prefs']:
   prefs = os.path.join(args.profile_path, f'{prefs}.js')
   if not os.path.exists(prefs): continue
@@ -52,12 +80,12 @@ for prefs in ['user', 'prefs']:
   user_prefs = []
   with open(prefs) as f:
     for line in f.readlines():
-      #print(line, [pref for pref in settings.keys() if pref in line])
-      if len([True for pref in settings.keys() if pref in line]) == 0:
+      if pref_name(line) not in preferences:
         user_prefs.append(line)
-    for key, value in settings.items():
-      if value is not None:
-        user_prefs.append(f'user_pref({json.dumps(key)}, {json.dumps(value)});\n')
+    if os.path.basename(prefs) == 'user.js':
+      for key, value in preferences.items():
+        if value is not None:
+          user_prefs.append(f'user_pref({json.dumps(key)}, {json.dumps(value)});\n')
 
   with open(prefs, 'w') as f:
     f.write(''.join(user_prefs))
@@ -66,12 +94,13 @@ system('npm run build')
 
 #system(f'rm -rf {profile}extensions.json')
 
+if 'db' in config['profile']:
+  shutil.copyfile(config['profile']['db'], os.path.join(args.profile_path, 'zotero', 'zotero.sqlite'))
+
 for plugin in args.plugin:
   rdf = ET.parse(os.path.join(plugin, 'install.rdf')).getroot()
   for plugin_id in rdf.findall('{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description/{http://www.mozilla.org/2004/em-rdf#}id'):
     plugin_path = os.path.join(args.profile_path, 'extensions', plugin_id.text)
-
-  system(f"rm -rf {shlex.quote(os.path.join(plugin, '*'))}")
 
   with open(plugin_path, 'w') as f:
     path = os.path.join(os.getcwd(), plugin)
