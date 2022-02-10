@@ -13,7 +13,6 @@
   </stringbundleset>
 	
 	<!-- Include the main extension logic -->
-  <script src="chrome://zotero/content/include.js"/>
   <script src="chrome://<%= plugin.name %>/content/<%= plugin.name %>.js"/>
   <script>
     window.addEventListener('load', async function() {
