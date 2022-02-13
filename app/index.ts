@@ -69,6 +69,10 @@ class ZoteroPlugin extends Generator {
     this.props.user.email = this.user.git.email()
   }
 
+  public end() {
+    this.log('also look at the `zotero-plugin` package that is now installed for your plugin')
+  }
+
   public writing(): void {
     const package_json = {
       name: this.props.plugin.name,
