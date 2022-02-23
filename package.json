@@ -33,7 +33,7 @@
     "tslib": "^2.3.1",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.4.2",
-    "yeoman-test": "^6.2.0",
+    "yeoman-test": "^6.3.0",
     "yosay": "^2.0.2"
   },
   "devDependencies": {
