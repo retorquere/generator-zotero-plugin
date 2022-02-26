@@ -24,7 +24,7 @@
     "npm": ">= 4.0.0"
   },
   "dependencies": {
-    "@types/yeoman-generator": "^5.2.8",
+    "@types/yeoman-generator": "^5.2.9",
     "inquirer-npm-name": "^4.0.0",
     "jest": "^27.4.5",
     "lodash": "^4.17.21",
