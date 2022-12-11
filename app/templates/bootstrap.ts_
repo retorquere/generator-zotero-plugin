@@ -50,7 +50,7 @@ async waitForWindow() {
     // Check if window is already loaded
     const windows = Services.wm.getEnumerator('navigator:browser');
     while (windows.hasMoreElements()) {
-      resolve(windows.getNext())
+      return resolve(windows.getNext())
     }
 
     // If not, add a listener for when the window does load
