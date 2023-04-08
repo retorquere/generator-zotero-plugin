@@ -4,3 +4,4 @@ coverage
 app/*.d.ts
 generator-temp
 .eslintcache
+test-plugin

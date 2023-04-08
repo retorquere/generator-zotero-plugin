@@ -4,6 +4,7 @@ import yosay from 'yosay'
 import askName from 'inquirer-npm-name'
 import * as _ from 'lodash'
 import * as path from 'path'
+import * as Eta from 'eta'
 
 const prefix = 'zotero-'
 
@@ -19,11 +20,12 @@ class ZoteroPlugin extends Generator {
       name: '',
       humanName: '',
       description: '',
+      id: '',
     },
     code: {
       namespace: '',
       localePrefix: '',
-      bootstrapped: true,
+      template: '',
     },
     user: {
       username: '',
@@ -44,16 +46,22 @@ class ZoteroPlugin extends Generator {
       validate: str => (str.length > prefix.length),
     }, this)).name
 
+    const template = {
+      'Overlay plugin for Zotero 6': 'src-1.0',
+      'Overlay plugin for Zotero 6 and bootstrapped plugin for Zotero 7': 'src-1.1',
+      'Bootstrapped plugin for Zotero 6 and 7': 'src-1.2',
+      'Bootstrapped plugin for Zotero 7': 'src-2.0',
+    }
     const answers = await this.prompt([
       { type: 'input', name: 'description', message: 'Description' },
-      { type: 'list', name: 'kind', message: 'Do you want an overlay or a bootstrapped extension?', choices: ['overlay', 'bootstrapped' ] },
+      { type: 'list', name: 'template', message: 'What kind of extension are you building?', choices: Object.keys(template).sort() },
     ])
 
     this.props.plugin.description = answers.description
     this.props.plugin.humanName = this.props.plugin.name.replace(prefix, '').replace(/(^|-)([a-z])/g, g => g.toUpperCase().replace(/-/g, ' ')).trim()
     this.props.code.namespace = this.props.plugin.humanName.replace(/ /g, '')
     this.props.code.localePrefix = this.props.plugin.name.replace(/-/g, '.')
-    this.props.code.bootstrapped = (answers.kind === 'bootstrapped')
+    this.props.code.template = template[answers.template]
 
     try {
       this.props.user.username = await this.user.github.username()
@@ -67,6 +75,8 @@ class ZoteroPlugin extends Generator {
     }
     this.props.user.name = this.user.git.name()
     this.props.user.email = this.user.git.email()
+
+    this.props.plugin.id = `${this.props.plugin.name}@${this.props.user.email.replace(/.+@/, '')}`
   }
 
   public end() {
@@ -74,6 +84,20 @@ class ZoteroPlugin extends Generator {
   }
 
   public writing(): void {
+    this.fs.copy(
+      this.templatePath(path.join('make-it-red', this.props.code.template, '**')),
+      this.destinationPath('client'), {
+        globOptions: { dot: true },
+        process: (contents: Buffer) => {
+          const source = contents.toString('utf-8')
+          if (source.includes('<%=')) {
+            console.log('***rendering***')
+            return Eta.render(source, this.props)
+          }
+          return contents
+        },
+      })
+
     const package_json = {
       name: this.props.plugin.name,
       version: '0.0.1',
@@ -103,69 +127,17 @@ class ZoteroPlugin extends Generator {
         name: `${this.props.plugin.humanName} for Zotero`,
         updateLink: `https://github.com/${this.props.user.username}/${this.props.plugin.name}/releases/download/v{version}/${this.props.plugin.name}-{version}.xpi`,
         releaseURL: `https://github.com/${this.props.user.username}/${this.props.plugin.name}/releases/download/release/`,
-        bootstrapped: false,
       },
     }
 
-    if (this.props.code.bootstrapped) {
-      package_json.xpi.bootstrapped = true
-    }
-    else {
-      delete package_json.xpi.bootstrapped
-    }
     this.fs.writeJSON(this.destinationPath('package.json'), package_json)
 
-    const templates = [
-      'README.md',
-      'esbuild.js_',
-      'chrome.manifest',
-      'locale/en-US/index.dtd',
-      'content/debug.ts',
-      'content/main.ts_',
-    ]
-
-    if (this.props.code.bootstrapped) {
-      templates.push('bootstrap.ts_')
-    }
-    else {
-      templates.push('content/overlay.xul')
-    }
-
-    for (const src of templates) {
-      const tgt = src
-        .replace('/main.', `/${this.props.plugin.name}.`)
-        .replace('/overlay.', `/${this.props.plugin.name}.`)
-        .replace('/index.', `/${this.props.plugin.name}.`)
-        .replace('.ts_', '.ts')
-        .replace('.js_', '.js')
-      this.fs.copyTpl(this.templatePath(src), this.destinationPath(tgt), this.props)
-    }
-    const files = [
-      'start.py',
-      'start.ini.sample',
-      'tsconfig.json',
-      'dot-gitignore',
-      'dot-github/workflows/release.yml',
-      'skin/default/overlay.css',
-    ]
-    for (const src of files) {
-      const tgt = src.replace(/dot-/g, '.')
-      this.fs.copy(this.templatePath(src), this.destinationPath(tgt))
-    }
-    const copy = [
-      '.eslintrc.json',
-      '.eslintignore',
-    ]
-    for (const src of copy) {
-      this.fs.copy(path.join(__dirname, '..', src), this.destinationPath(src))
-    }
   }
 
-  /*
   public install(): void {
-    this.installDependencies({ npm: true })
+    // this.installDependencies({ npm: true })
+    console.log('install')
   }
-  */
 }
 
 export = ZoteroPlugin
