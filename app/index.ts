@@ -4,7 +4,6 @@ import yosay from 'yosay'
 import askName from 'inquirer-npm-name'
 import * as _ from 'lodash'
 import * as path from 'path'
-import * as Eta from 'eta'
 
 const prefix = 'zotero-'
 
@@ -84,19 +83,37 @@ class ZoteroPlugin extends Generator {
   }
 
   public writing(): void {
+    const base = 'client'
     this.fs.copy(
       this.templatePath(path.join('make-it-red', this.props.code.template, '**')),
-      this.destinationPath('client'), {
+      this.destinationPath(base), {
         globOptions: { dot: true },
         process: (contents: Buffer) => {
-          const source = contents.toString('utf-8')
-          if (source.includes('<%=')) {
-            console.log('***rendering***')
-            return Eta.render(source, this.props)
-          }
+          let source = contents.toString('utf-8')
+          source = source.replace(/make-it-red-ftl/g, `${this.props.plugin.name}-ftl`)
+          source = source.replace(/make-it-red[.]ftl/g, `${this.props.plugin.name}.ftl`)
+          source = source.replace(/make-it-red[.]properties/g, `${this.props.plugin.name}.properties`)
+          source = source.replace(/make-it-red@zotero[.]org/g, `.${this.props.plugin.id}.`)
+          source = source.replace(/[.]make-it-red[.]/g, `.${this.props.plugin.name}.`)
+          source = source.replace(/[/]make-it-red[/]/g, `/${this.props.plugin.name}/`)
+          source = source.replace(/Make It Red/g, `/${this.props.plugin.description}/`)
+          source = source.replace(/Makes everything red/g, `/${this.props.plugin.description}/`)
+          source = source.replace(/Zotero[.]MakeItRed/g, `/Zotero.${this.props.code.namespace}/`)
+          source = source.replace(/make-it-red([-.])/g, `/${this.props.plugin.name}$1`)
+          source = source.replace(/locale\s+make-it-red\s+en-US/, `locale ${this.props.plugin.name} en-US`)
+          if (source !== contents.toString('utf-8')) return source
           return contents
         },
-      })
+      }
+    )
+    this.fs.move(
+      this.destinationPath(path.join(base, 'locale', 'en-US', 'make-it-red.ftl')),
+      this.destinationPath(path.join(base, 'locale', 'en-US', `${this.props.plugin.name}.ftl`))
+    )
+    this.fs.move(
+      this.destinationPath(path.join(base, 'chrome', 'locale', 'en-US', 'make-it-red.properties')),
+      this.destinationPath(path.join(base, 'chrome', 'locale', 'en-US', `${this.props.plugin.name}.properties`))
+    )
 
     const package_json = {
       name: this.props.plugin.name,
