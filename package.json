@@ -33,10 +33,10 @@
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.8.0",
     "yeoman-test": "^7.4.0",
+    "@types/mocha": "^10.0.1",
     "yosay": "^2.0.2"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "esbuild": "^0.17.15",

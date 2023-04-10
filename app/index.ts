@@ -74,12 +74,9 @@ class ZoteroPlugin extends Generator {
     this.props.code.namespace = `Zotero.${this.props.code.namespace.replace(/^Zotero./, '').replace(/[^a-z0-9]/gi, '')}`
   }
 
-  public end() {
-    this.log('also look at the `zotero-plugin` package that is now installed for your plugin')
-  }
-
   public writing(): void {
     const base = 'client'
+
     this.fs.copy(
       this.templatePath(path.join('make-it-red', this.props.code.template, '**')),
       this.destinationPath(base), {
@@ -110,10 +107,12 @@ class ZoteroPlugin extends Generator {
       this.destinationPath(path.join(base, 'chrome', 'locale', 'en-US', 'make-it-red.properties')),
       this.destinationPath(path.join(base, 'chrome', 'locale', 'en-US', `${this.props.plugin.base}.properties`))
     )
+    this.fs.delete(this.destinationPath(path.join(base, 'install.rdf')))
 
-    const package_json = {
+    const version = '0.0.1'
+    this.fs.writeJSON(this.destinationPath('package.json'), {
       name: this.props.plugin.base,
-      version: '0.0.1',
+      version,
       description: this.props.plugin.name,
       scripts: {
         lint: 'eslint . --ext .ts --cache --cache-location .eslintcache/',
@@ -141,15 +140,30 @@ class ZoteroPlugin extends Generator {
         updateLink: `https://github.com/${this.props.repo.owner}/${this.props.repo.name}/releases/download/v{version}/${this.props.plugin.base}-{version}.xpi`,
         releaseURL: `https://github.com/${this.props.repo.owner}/${this.props.repo.name}/releases/download/release/`,
       },
+    })
+
+    if (this.fs.exists(this.destinationPath(path.join(base, 'manifest.json')))) {
+      this.fs.writeJSON(this.destinationPath(path.join(base, 'manifest.json')), {
+        manifest_version: 2,
+        name: this.props.plugin.name,
+        version,
+        description: this.props.plugin.name,
+        applications: {
+          zotero: {
+            id: this.props.plugin.id,
+            update_url: `https://github.com/${this.props.repo.owner}/${this.props.repo.name}/releases/download/release/update.rdf`,
+            strict_min_version: '6.999',
+            strict_max_version: '7.0.*',
+          },
+        },
+      })
     }
 
-    this.fs.writeJSON(this.destinationPath('package.json'), package_json)
-
+    this.env.options.nodePackageManager = 'npm'
   }
 
-  public install(): void {
-    // this.installDependencies({ npm: true })
-    console.log('install')
+  public end() {
+    this.log('also look at the `zotero-plugin` package that is now installed for your plugin')
   }
 }
 
