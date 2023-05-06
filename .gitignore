@@ -5,3 +5,4 @@ app/*.d.ts
 generator-temp
 .eslintcache
 test-plugin
+chatgpt-summary

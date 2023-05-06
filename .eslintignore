@@ -2,3 +2,4 @@ node_modules
 *.d.ts
 generator-temp
 app/templates/make-it-red
+test-plugin
