@@ -19,3 +19,21 @@ cd zotero-my-fantastic-plugin
 yo zotero-plugin
 ```
 
+After that:
+
+```bash
+npm run build
+```
+to build
+
+```bash
+npm version patch
+```
+
+to release a new version (if you are on the main/master branch)
+
+```bash
+npm start
+```
+
+to start zotero with your plugin loaded (edit `zotero-plugin.ini` first)
