@@ -98,7 +98,7 @@ class ZoteroPlugin extends Generator {
           source = source.replace(/make-it-red@zotero[.]org/g, `.${this.props.plugin.id}.`)
           source = source.replace(/[.]make-it-red[.]/g, `.${this.props.plugin.base}.`)
           source = source.replace(/[/]make-it-red[/]/g, `/${this.props.plugin.base}/`)
-          source = source.replace(/Make It Red/g, `/${this.props.plugin.name}/`)
+          source = source.replace(/Make It Red/g, `${this.props.plugin.name}`)
           source = source.replace(/Makes everything red/g, `${this.props.plugin.name}`)
           source = source.replace(/Zotero[.]MakeItRed/g, this.props.code.namespace)
           source = source.replace(/make-it-red([-.])/g, `${this.props.plugin.base}$1`)
