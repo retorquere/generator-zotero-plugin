@@ -157,6 +157,7 @@ class ZoteroPlugin extends Generator {
         name: `${this.props.plugin.name} for Zotero`,
         updateLink: `https://github.com/${this.props.repo.owner}/${this.props.repo.name}/releases/download/v{version}/${this.props.plugin.base}-{version}.xpi`,
         releaseURL: `https://github.com/${this.props.repo.owner}/${this.props.repo.name}/releases/download/release/`,
+        bootstrapped: true,
       },
     })
 
