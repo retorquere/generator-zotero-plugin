@@ -60,7 +60,7 @@
     "preversion": "npm start",
     "postversion": "npm publish",
     "xupstream": "echo upstream",
-    "upstream": "git submodule update --remote --merge && cd app/templates/make-it-red && git fetch upstream && git checkout main && git rebase upstream/main",
+    "upstream": "git submodule update --remote --merge && cd app/templates/make-it-red && git fetch upstream && git checkout main && git merge upstream/main",
     "compile": "tsc",
     "prestart": "npm run upstream",
     "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
