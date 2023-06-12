@@ -66,11 +66,11 @@ class ZoteroPlugin extends Generator {
 
     const template = {
       // 'Overlay plugin for Zotero 6': 'src-1.0',
-      // 'Overlay plugin for Zotero 6 and bootstrapped plugin for Zotero 7': 'src-1.1',
+      'Overlay plugin for Zotero 6 and bootstrapped plugin for Zotero 7': 'src-1.1',
       'Bootstrapped plugin for Zotero 6 and 7': 'src-1.2',
       'Bootstrapped plugin for Zotero 7': 'src-2.0',
     }
-    this.props.code.template = await this._private_ask({ type: 'list', choices: Object.keys(template).sort(), message: 'What kind of extension are you building?' })
+    this.props.code.template = await this._private_ask({ type: 'list', choices: Object.keys(template), message: 'What kind of extension are you building?' })
     this.props.code.template = template[this.props.code.template]
   }
 
@@ -120,8 +120,11 @@ class ZoteroPlugin extends Generator {
       path.join(base, 'chrome', 'locale', 'en-US', 'make-it-red.properties'),
       path.join(base, 'chrome', 'locale', 'en-US', `${this.props.plugin.base}.properties`)
     )
-    this._private_move(path.join(base, 'bootstrap.js'), path.join(root, 'bootstrap.ts'))
-    this._private_move(path.join(base, 'lib.js'), path.join(root, 'lib.ts'))
+
+    for (const js of [ 'bootstrap.js', 'lib.js', 'chrome/content/lib.js' ]) {
+      this._private_move(path.join(base, ...js.split('/')), path.join(root, ...js.replace(/[.]js$/, '.ts').split('/')))
+    }
+
     this._private_move(path.join(base, 'esbuild.js'), path.join(root, 'esbuild.js'))
 
     this.fs.copy(path.join(__dirname, 'tsconfig.json'), this.destinationPath(path.join(root, 'tsconfig.json')))
